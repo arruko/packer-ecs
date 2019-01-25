@@ -1,0 +1,44 @@
+---
+# Packer version
+packer_version: "1.0.0"
+
+# Packer arch
+packer_arch: "amd64"
+
+# Path to look for packer bin
+packer_bin_path: /usr/local/bin
+
+# AWS account ID
+packer_aws_account_id: ""
+
+# AWS IAM role used to privileged session
+packer_aws_admin_role: ""
+
+# AWS ARN for privileged role
+packer_aws_role_arn: "arn:aws:iam::{{ packer_aws_account_id | mandatory }}:{{ packer_aws_admin_role | mandatory }}"
+
+# Name for AWS STS temporary session
+packer_aws_sts_session_name: packer
+
+# AWS region for AMI creation (must be corelated to 'source_ami' parameter)
+packer_aws_sts_region: ""
+
+# Packer builders
+# Each key belongs to one AWS AMI builder
+# Each 'source_ami' key must belong to 'packer_aws_sts_region'. Check AWS documentation in order to find proper source AMI for your region.
+packer_aws_builders:
+  - type: "amazon-ebs"
+    access_key: "{{ packer_aws_session_access_key }}"
+    secret_key: "{{ packer_aws_session_secret_key }}"
+    token: "{{ packer_aws_session_token }}"
+    region: "us-east-2"
+    source_ami: "ami-207b5a45"
+    instance_type: "t2.micro"
+    ssh_username: "ec2-user"
+    associate_public_ip_address: "true"
+    ami_name: "packer-ecs-docker-{{ ansible_date_time.iso8601_basic_short }}"
+    tags:
+      Name: "AMI Customized"
+      SourceAMI: "ami-207b5a45"
+      DockerVersion: "17.06.2"
+      ECSAgentVersion: "1.15.2"
