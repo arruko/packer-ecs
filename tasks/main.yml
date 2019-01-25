@@ -7,7 +7,7 @@
   assert:
     that:
       - AWS_PROFILE is defined
-      - AWS_PROFILE != ''
+      - AWS_PROFILE | length > 0
     fail_msg: "'AWS_PROFILE' must be defined as an environment variable."
     success_msg: "'AWS_PROFILE' is defined properly on your environment."
 
@@ -15,7 +15,7 @@
   assert:
     that:
       - packer_aws_account_id is defined
-      - packer_aws_account_id != ''
+      - packer_aws_account_id | length > 0
     fail_msg: "'packer_aws_account_id' must be defined as an Ansible variable."
     success_msg: "'packer_aws_account_id' is defined properly."
 
@@ -28,11 +28,6 @@
       SessionName: "{{ packer_aws_sts_session_name | mandatory }}"
       Region: "{{ packer_aws_sts_region | mandatory }}"
   register: aws_sts_result
-
-- name: get packer version
-  shell: packer version
-  register: packer_version_query
-  ignore_errors: true
 
 - name: Ensure unzip is installed.
   package: 
