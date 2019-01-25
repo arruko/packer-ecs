@@ -30,8 +30,8 @@
   register: aws_sts_result
 
 - name: Ensure unzip is installed.
-  package: 
-    name: unzip 
+  package:
+    name: unzip
     state: present
   register: unzip_present
 
