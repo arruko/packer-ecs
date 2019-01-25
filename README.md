@@ -1,5 +1,7 @@
 # arruko.packer-ecs
 
+[![Build Status](https://travis-ci.org/arruko/packer-ecs.svg?branch=master)](https://travis-ci.org/arruko/packer-ecs)
+
 ## Packer Build for ECS Images
 
 This repository provides a Packer build script for creating Amazon Machine Images (AMIs) for running custom AWS EC2 Container Service (ECS) Container Instance images. This repository was forked from original repo, modifying project structure in order to use it as an Ansible [role](https://galaxy.ansible.com/arruko/packer-ecs) instead of a ```Make``` script.
@@ -25,7 +27,7 @@ ansible galaxy install arruko.aws-sts
 ```
 
 ## Example Playbook
-
+```
 - hosts: {{ env }}
   roles:
      - role: arruko.packer-ecs
@@ -33,7 +35,7 @@ ansible galaxy install arruko.aws-sts
     packer_aws_account_id: "YOUR_AWS_ACCOUNT_ID"
     packer_aws_admin_role: "YOUR_AWS_ADMIN_ROLE_NAME"
     packer_aws_sts_region: "YOUR_AWS_REGION"
-
+```
 Run:
 
 ```
