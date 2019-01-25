@@ -1,0 +1,66 @@
+---
+- name: set fact for AWS_PROFILE
+  set_fact:
+    AWS_PROFILE: "{{ lookup('env','AWS_PROFILE') }}"
+
+- name: assert that AWS_PROFILE is defined properly
+  assert:
+    that:
+      - AWS_PROFILE is defined
+      - AWS_PROFILE != ''
+    fail_msg: "'AWS_PROFILE' must be defined as an environment variable."
+    success_msg: "'AWS_PROFILE' is defined properly on your environment."
+
+- name: assert that AWS account ID is given
+  assert:
+    that:
+      - packer_aws_account_id is defined
+      - packer_aws_account_id != ''
+    fail_msg: "'packer_aws_account_id' must be defined as an Ansible variable."
+    success_msg: "'packer_aws_account_id' is defined properly."
+
+- name: assume sts role session
+  include_role:
+    name: arruko.aws-sts
+  vars:
+    Sts:
+      Role: "{{ packer_aws_role_arn | mandatory }}"
+      SessionName: "{{ packer_aws_sts_session_name | mandatory }}"
+      Region: "{{ packer_aws_sts_region | mandatory }}"
+  register: aws_sts_result
+
+- name: get packer version
+  shell: packer version
+  register: packer_version_query
+  ignore_errors: true
+
+- name: Ensure unzip is installed.
+  package: 
+    name: unzip 
+    state: present
+  register: unzip_present
+
+- name: Download and unarchive Packer.
+  unarchive:
+    src: https://releases.hashicorp.com/packer/{{ packer_version | mandatory }}/packer_{{ packer_version | mandatory }}_linux_{{ packer_arch | mandatory }}.zip
+    dest: "{{ packer_bin_path | mandatory }}"
+    remote_src: true
+    creates: "{{ packer_bin_path | mandatory }}/packer"
+
+- name: set credentials from aws-sts temporary session for packer
+  set_fact:
+    packer_aws_session_access_key: "{{ Sts.Credentials.AWS_ACCESS_KEY | mandatory }}"
+    packer_aws_session_secret_key: "{{ Sts.Credentials.AWS_SECRET_KEY | mandatory }}"
+    packer_aws_session_token: "{{ Sts.Credentials.AWS_SECURITY_TOKEN | mandatory }}"
+
+- name: create packer config template
+  template:
+    src: packer.json.j2
+    dest: "{{ role_path }}/packer.json"
+
+- name: create packer stack on aws
+  shell: |
+    packer build packer.json
+  args:
+    chdir: "{{ role_path }}"
+  register: packer_aws_execution_result

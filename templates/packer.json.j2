@@ -1,0 +1,44 @@
+{
+{% raw %}
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/configure-timezone.sh",
+      "environment_vars": [
+        "TIME_ZONE={{user `time_zone`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "scripts/install-os-packages.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/cloud-init-options.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/cleanup.sh"
+    },
+    {
+      "type": "file",
+      "source": "files/firstrun.sh",
+      "destination": "/home/ec2-user/firstrun.sh"
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "manifest",
+      "output": "manifest.json",
+      "strip_path": true
+    }
+  ],
+{% endraw %}
+  "variables": {
+      "aws_access_key_id": "{{ packer_aws_session_access_key | mandatory }}",
+      "aws_secret_access_key": "{{ packer_aws_session_secret_key | mandatory }}",
+      "aws_session_token": "{{ packer_aws_session_token | mandatory }}",
+{% raw %} "time_zone": "{{env `TIME_ZONE`}}"{% endraw %}
+  },
+  "builders": {{ packer_aws_builders | mandatory | to_json }}
+}

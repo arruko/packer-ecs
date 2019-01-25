@@ -1,35 +1,61 @@
-# Docker in Production using AWS - Packer Build for ECS Images
+# arruko.packer-ecs
 
-This repository provides a Packer build script for creating Amazon Machine Images (AMIs) for running custom AWS EC2 Container Service (ECS) Container Instance images, as described in the Pluralsight course Docker in Production using AWS.
+## Packer Build for ECS Images
 
-## Branches
+This repository provides a Packer build script for creating Amazon Machine Images (AMIs) for running custom AWS EC2 Container Service (ECS) Container Instance images. This repository was forked from original repo, modifying project structure in order to use it as an Ansible [role](https://galaxy.ansible.com/arruko/packer-ecs) instead of a ```Make``` script.
 
-This repository contains two branches:
+## Role Variables
 
-- [`master`](https://github.com/docker-production-aws/packer-ecs/tree/master) - represents the initial starting state of the repository as viewed in the course.  Specifically this is an empty repository that you are instructed to create in the module **Customizing ECS Container Instances**.
+Please refer to the [defaults file](/defaults/main.yml) for an up to date list of input parameters.
 
-- [`final`](https://github.com/docker-production-aws/packer-ecs/tree/final) - represents the final state of the repository after completing all configuration tasks as described in the course material.
+## Installation
 
-> The `final` branch is provided as a convenience in the case you get stuck, or want to avoid manually typing out large configuration files.  In most cases however, you should attempt to configure this repository by following the course material.
-
-To clone this repository and checkout a branch you can simply use the following commands:
+To install this repository and used it as part of your Ansible project you can simply use the following commands:
 
 ```
-$ git clone https://github.com/docker-production-aws/packer-ecs.git
-...
-...
-$ git checkout final
-Switched to branch 'final'
-$ git checkout master
-Switched to branch 'master'
+ansible galaxy install arruko.packer-ecs
 ```
+
+## Dependencies
+
+This role depends on ```arruko.aws-sts``` role for AWS temporary user session. You can use the following commands to install it:
+
+```
+ansible galaxy install arruko.aws-sts
+```
+
+## Example Playbook
+
+- hosts: {{ env }}
+  roles:
+     - role: arruko.packer-ecs
+  vars:
+    packer_aws_account_id: "YOUR_AWS_ACCOUNT_ID"
+    packer_aws_admin_role: "YOUR_AWS_ADMIN_ROLE_NAME"
+    packer_aws_sts_region: "YOUR_AWS_REGION"
+
+Run:
+
+```
+ansible-playbook playbook.yml -e env=production
+```
+
+You must specify ```env``` variable at runtime in order to use this role.
 
 ## Errata
 
 No known issues.
+
+## TODO
+
+- Unit Testing with Molecule
 
 ## Further Reading
 
 - [Latest Amazon ECS-Optimized AMI](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html)
 - [Packer AMI Builder reference](https://www.packer.io/docs/builders/amazon-ebs.html)
 - [Configuring CloudWatch logs](http://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_cloudwatch_logs.html)
+
+## License
+
+This project is licensed under the terms of the [MIT License](/LICENSE)
