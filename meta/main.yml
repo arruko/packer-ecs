@@ -23,7 +23,3 @@ galaxy_info:
     - ecs
     - ami
     - docker
-
-dependencies:
-  - role: arruko.aws_sts
-    version: 1.0.0
