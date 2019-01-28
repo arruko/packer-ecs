@@ -21,7 +21,7 @@
 
 - name: assume sts role session
   include_role:
-    name: arruko.aws-sts
+    name: arruko.aws_sts
   vars:
     Sts:
       Role: "{{ packer_aws_role_arn | mandatory }}"
