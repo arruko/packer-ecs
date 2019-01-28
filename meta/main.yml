@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  name: packer_ecs
   author: Jimmy Herrera
   description: An Ansible role to produce AWS ECS AMIs for Docker workers.
   license: MIT
@@ -24,5 +25,5 @@ galaxy_info:
     - docker
 
 dependencies:
-  - role: arruko.aws-sts
+  - role: arruko.aws_sts
     version: 1.0.0
