@@ -38,7 +38,9 @@
       "aws_access_key_id": "{{ packer_aws_session_access_key | mandatory }}",
       "aws_secret_access_key": "{{ packer_aws_session_secret_key | mandatory }}",
       "aws_session_token": "{{ packer_aws_session_token | mandatory }}",
-{% raw %} "time_zone": "{{env `TIME_ZONE`}}"{% endraw %}
+      {% raw %} 
+      "time_zone": "{{env `TIME_ZONE`}}"
+      {% endraw %}
   },
   "builders": {{ packer_aws_builders | mandatory | to_json }}
 }
