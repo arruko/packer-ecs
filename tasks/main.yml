@@ -19,16 +19,6 @@
     fail_msg: "'packer_aws_account_id' must be defined as an Ansible variable."
     success_msg: "'packer_aws_account_id' is defined properly."
 
-- name: assume sts role session
-  include_role:
-    name: arruko.aws_sts
-  vars:
-    Sts:
-      Role: "{{ packer_aws_role_arn | mandatory }}"
-      SessionName: "{{ packer_aws_sts_session_name | mandatory }}"
-      Region: "{{ packer_aws_sts_region | mandatory }}"
-  register: aws_sts_result
-
 - name: Ensure unzip is installed.
   package:
     name: unzip
